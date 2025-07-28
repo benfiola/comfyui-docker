@@ -12,6 +12,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/google/shlex"
 	"github.com/urfave/cli/v3"
 )
 
@@ -224,14 +225,32 @@ func main() {
 			{
 				Name: "entrypoint",
 				Action: func(ctx context.Context, c *cli.Command) error {
+					var err error
+					arguments := c.StringArgs("arguments")
+					if len(arguments) == 0 {
+						arguments, err = shlex.Split(c.String("arguments"))
+						if err != nil {
+							return err
+						}
+					}
 					return entrypoint(EntrypointOpts{
-						Arguments: c.StringArgs("arguments"),
+						Arguments: arguments,
 						Gid:       c.Int("gid"),
 						Uid:       c.Int("uid"),
 					})
 				},
+				Arguments: []cli.Argument{
+					&cli.StringArgs{
+						Name: "arguments",
+						Min:  0,
+						Max:  -1,
+					},
+				},
 				Flags: []cli.Flag{
-					&cli.S
+					&cli.StringFlag{
+						Name:    "arguments",
+						Sources: cli.EnvVars("ARGUMENTS"),
+					},
 					&cli.IntFlag{
 						Name:     "gid",
 						Required: true,
