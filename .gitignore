@@ -1,0 +1,2 @@
+.vscode/**/*
+!.vscode/launch.template.jsonc
