@@ -17,4 +17,4 @@ EXPOSE 8188
 
 COPY comfyui-docker /usr/bin/comfyui-docker
 RUN comfyui-docker setup
-ENTRYPOINT ["comfyui-docker", "entrypoint"]
+ENTRYPOINT ["comfyui-docker", "entrypoint", "--"]
