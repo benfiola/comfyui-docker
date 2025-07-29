@@ -84,13 +84,14 @@ type InstallNodesOpts struct {
 
 func installNodes(opts InstallNodesOpts) error {
 	nodesDir := filepath.Join(appDir, "custom_nodes")
-	for _, node := range opts.Nodes {
-		logger.Info("installing node", "node", node)
+	for _, url := range opts.Nodes {
+		node := strings.TrimSuffix(filepath.Base(url), ".git")
+		logger.Info("installing node", "node", node, "url", url)
 		nodeDir := filepath.Join(nodesDir, node)
 		requirements := filepath.Join(nodeDir, "requirements.txt")
 		commands := [][]string{
 			// clone node
-			{"git", "clone", node, nodeDir},
+			{"git", "clone", url, nodeDir},
 			// install node dependencies
 			{"pip", "install", "-r", requirements},
 		}
@@ -263,6 +264,13 @@ func main() {
 					return installNodes(InstallNodesOpts{
 						Nodes: nodes,
 					})
+				},
+				Arguments: []cli.Argument{
+					&cli.StringArgs{
+						Name: "nodes",
+						Min:  0,
+						Max:  -1,
+					},
 				},
 				Flags: []cli.Flag{
 					&cli.StringFlag{
