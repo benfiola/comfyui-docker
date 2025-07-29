@@ -78,6 +78,33 @@ func setup(opts SetupOpts) error {
 	return nil
 }
 
+type InstallNodesOpts struct {
+	Nodes []string
+}
+
+func installNodes(opts InstallNodesOpts) error {
+	nodesDir := filepath.Join(appDir, "custom_nodes")
+	for _, node := range opts.Nodes {
+		logger.Info("installing node", "node", node)
+		nodeDir := filepath.Join(nodesDir, node)
+		requirements := filepath.Join(nodeDir, "requirements.txt")
+		commands := [][]string{
+			// clone node
+			{"git", "clone", node, nodeDir},
+			// install node dependencies
+			{"pip", "install", "-r", requirements},
+		}
+		for _, command := range commands {
+			err := runCmd(command...)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
 type EntrypointOpts struct {
 	Arguments []string
 	Gid       int
@@ -219,6 +246,28 @@ func main() {
 						Name:     "torchvision-version",
 						Required: true,
 						Sources:  cli.EnvVars("TORCHVISION_VERSION"),
+					},
+				},
+			},
+			{
+				Name: "install-nodes",
+				Action: func(ctx context.Context, c *cli.Command) error {
+					nodes := c.StringArgs("nodes")
+					var err error
+					if len(nodes) == 0 {
+						nodes, err = shlex.Split(c.String("nodes"))
+						if err != nil {
+							return err
+						}
+					}
+					return installNodes(InstallNodesOpts{
+						Nodes: nodes,
+					})
+				},
+				Flags: []cli.Flag{
+					&cli.StringFlag{
+						Name:    "nodes",
+						Sources: cli.EnvVars("NODES"),
 					},
 				},
 			},
