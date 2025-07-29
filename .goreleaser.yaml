@@ -21,7 +21,7 @@ dockers:
       - "--build-arg=TORCH_INDEX_URL=https://download.pytorch.org/whl/cu126"
     dockerfile: .goreleaser.Dockerfile
     image_templates:
-      - "benfiola/comfyui-docker:{{ .Version }}-cuda126"
+      - "benfiola/comfyui:{{ .Version }}-cuda126"
     use: buildx
   - build_flag_templates:
       - "--pull"
@@ -29,5 +29,5 @@ dockers:
       - "--build-arg=TORCH_INDEX_URL=https://download.pytorch.org/whl/cpu"
     dockerfile: .goreleaser.Dockerfile
     image_templates:
-      - "benfiola/comfyui-docker:{{ .Version }}-cpu"
+      - "benfiola/comfyui:{{ .Version }}-cpu"
     use: buildx

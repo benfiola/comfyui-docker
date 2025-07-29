@@ -17,7 +17,7 @@ This docker image expects you to bind-mount a folder to `/data`. Ensure that the
 This means that if you're running ComfyUI with only CPUs:
 
 ```shell
-docker run -p 8188:8188 -v "[some-dir]:/data" benfiola/comfyui-docker:[version]-cpu --listen --cpu
+docker run -p 8188:8188 -v "[some-dir]:/data" benfiola/comfyui:[version]-cpu --listen --cpu
 ```
 
 In the above example:
