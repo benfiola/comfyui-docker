@@ -90,10 +90,10 @@ func installNodes(opts InstallNodesOpts) error {
 		nodeDir := filepath.Join(nodesDir, node)
 		requirements := filepath.Join(nodeDir, "requirements.txt")
 		commands := [][]string{
-			// clone node
+			// clone node repo
 			{"git", "clone", url, nodeDir},
-			// install node dependencies
-			{"pip", "install", "-r", requirements},
+			// install python deps if requirements file found
+			{"bash", "-c", fmt.Sprintf("[ -f %s ] && pip install -r %s", requirements, requirements)},
 		}
 		for _, command := range commands {
 			err := runCmd(command...)
@@ -153,46 +153,22 @@ func entrypoint(opts EntrypointOpts) error {
 		commands = append(commands, command)
 	}
 
-	commands = append(commands, [][]string{
-		// ensure data dir exists with correct ownership
-		{"mkdir", "-p", dataDir}}...,
-	)
-	dataDirs := []string{
-		"checkpoints",
-		"clip_vision",
-		"controlnet",
-		"diffusion_models",
-		"embeddings",
-		"clip",
-		"diffusers",
-		"gligen",
-		"hypernetworks",
-		"loras",
-		"photomaker",
-		"style_models",
-		"text_encoders",
-		"unet",
-		"upscale_models",
-		"vae",
-		"vae_approx",
-	}
-	for _, dir := range dataDirs {
-		srcPath := filepath.Join(appDir, "models", dir)
-		dstPath := filepath.Join(dataDir, dir)
-		commands = append(commands, [][]string{
-			// delete comfyui path
-			{"rm", "-rf", srcPath},
-			// create data path
-			{"mkdir", "-p", dstPath},
-			// symlink comfyui path to data path
-			{"ln", "-s", dstPath, srcPath},
-		}...)
-	}
-
-	// modify the launch command to perform privilege de-escalation
+	appDataDir := filepath.Join(appDir, "models")
+	appDataDirBak := fmt.Sprintf("%s.bak", appDataDir)
 	comfyId := fmt.Sprintf("%s:%s", userName, userName)
 	launchCommand = append([]string{"gosu", comfyId}, launchCommand...)
+
 	commands = append(commands, [][]string{
+		// save default copy of app's data dir
+		{"mv", appDataDir, appDataDirBak},
+		// ensure data dir exists
+		{"mkdir", "-p", dataDir},
+		// regenerate comfyui configuration files
+		{"rm", "-rf", filepath.Join(dataDir, "config")},
+		{"cp", "-R", filepath.Join(appDataDirBak, "config"), filepath.Join(dataDir, "config")},
+		// create data dir symlink
+		{"ln", "-s", dataDir, appDataDir},
+		// ensure app files owned by correct user
 		{"chown", "-R", comfyId, dataDir, appDir},
 		// launch the app
 		launchCommand,
