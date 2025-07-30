@@ -14,11 +14,11 @@ ENV UID=1000
 # exposes API port
 EXPOSE 8188
 
-COPY ./comfyui-install.sh /usr/bin/comfyui-install
+COPY comfyui-install.sh /usr/bin/comfyui-install
 RUN chmod +x /usr/bin/comfyui-install && comfyui-install
 
-COPY ./comfyui-install-nodes.sh /usr/bin/comfyui-install-nodes
-COPY ./comfyui-entrypoint.sh /usr/bin/comfyui-entrypoint
+COPY comfyui-install-nodes.sh /usr/bin/comfyui-install-nodes
+COPY comfyui-entrypoint.sh /usr/bin/comfyui-entrypoint
 RUN chmod +x /usr/bin/comfyui-install-nodes /usr/bin/comfyui-entrypoint
 
 ENTRYPOINT ["comfyui-entrypoint"]

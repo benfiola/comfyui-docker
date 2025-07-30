@@ -12,6 +12,10 @@ dockers:
       - "--platform=linux/amd64"
       - "--build-arg=TORCH_INDEX_URL=https://download.pytorch.org/whl/cu126"
     dockerfile: Dockerfile
+    extra_files:
+      - comfyui-entrypoint.sh
+      - comfyui-install-nodes.sh
+      - comfyui-install.sh
     image_templates:
       - "benfiola/comfyui:{{ .Version }}-cuda126"
     use: buildx
@@ -20,6 +24,10 @@ dockers:
       - "--platform=linux/amd64"
       - "--build-arg=TORCH_INDEX_URL=https://download.pytorch.org/whl/cpu"
     dockerfile: Dockerfile
+    extra_files:
+      - comfyui-entrypoint.sh
+      - comfyui-install-nodes.sh
+      - comfyui-install.sh
     image_templates:
       - "benfiola/comfyui:{{ .Version }}-cpu"
     use: buildx
