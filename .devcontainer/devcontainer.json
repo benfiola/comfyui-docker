@@ -4,7 +4,6 @@
     "vscode": {
       "extensions": [
         "esbenp.prettier-vscode",
-        "golang.go",
         "rohit-gohri.format-code-action"
       ],
       "settings": {
@@ -13,18 +12,12 @@
           "source.unusedImports",
           "source.formatDocument"
         ],
-        "[go]": {
-          "editor.defaultFormatter": "golang.go"
-        },
         "editor.defaultFormatter": "esbenp.prettier-vscode"
       }
     }
   },
   "features": {
-    "ghcr.io/devcontainers/features/docker-in-docker": {},
-    "ghcr.io/devcontainers/features/go:1": {
-      "version": "1.24.5"
-    }
+    "ghcr.io/devcontainers/features/docker-in-docker": {}
   },
   "postCreateCommand": "./.devcontainer/post-create.sh"
 }

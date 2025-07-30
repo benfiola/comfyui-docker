@@ -3,23 +3,12 @@ version: 2
 snapshot:
   version_template: "{{ .Version }}+SNAPSHOT-{{.ShortCommit}}"
 
-builds:
-  - binary: comfyui-docker
-    env:
-      - CGO_ENABLED=0
-    goos:
-      - linux
-    goarch:
-      - amd64
-    main: ./main.go
-    mod_timestamp: "{{ .CommitTimestamp }}"
-
 dockers:
   - build_flag_templates:
       - "--pull"
       - "--platform=linux/amd64"
       - "--build-arg=TORCH_INDEX_URL=https://download.pytorch.org/whl/cu126"
-    dockerfile: .goreleaser.Dockerfile
+    dockerfile: Dockerfile
     image_templates:
       - "benfiola/comfyui:{{ .Version }}-cuda126"
     use: buildx
@@ -27,7 +16,7 @@ dockers:
       - "--pull"
       - "--platform=linux/amd64"
       - "--build-arg=TORCH_INDEX_URL=https://download.pytorch.org/whl/cpu"
-    dockerfile: .goreleaser.Dockerfile
+    dockerfile: Dockerfile
     image_templates:
       - "benfiola/comfyui:{{ .Version }}-cpu"
     use: buildx
