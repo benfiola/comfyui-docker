@@ -169,8 +169,8 @@ func entrypoint(opts EntrypointOpts) error {
 		// ensure data dir exists
 		{"mkdir", "-p", dataDir},
 		// regenerate comfyui configuration files
-		{"rm", "-rf", filepath.Join(dataDir, "config")},
-		{"cp", "-R", filepath.Join(appDataDirBak, "config"), filepath.Join(dataDir, "config")},
+		{"rm", "-rf", filepath.Join(dataDir, "configs")},
+		{"cp", "-R", filepath.Join(appDataDirBak, "configs"), filepath.Join(dataDir, "configs")},
 		// create data dir symlink
 		{"ln", "-s", dataDir, appDataDir},
 		// ensure app files owned by correct user
