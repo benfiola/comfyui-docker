@@ -3,6 +3,8 @@ version: 2
 snapshot:
   version_template: "{{ .Version }}+SNAPSHOT-{{.ShortCommit}}"
 
+builds: []
+
 dockers:
   - build_flag_templates:
       - "--pull"
