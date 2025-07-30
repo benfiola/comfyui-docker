@@ -11,7 +11,7 @@ dockers:
       - "--pull"
       - "--platform=linux/amd64"
       - "--build-arg=TORCH_INDEX_URL=https://download.pytorch.org/whl/cu126"
-    dockerfile: Dockerfile
+    dockerfile: .goreleaser.Dockerfile
     extra_files:
       - comfyui-entrypoint.sh
       - comfyui-install-nodes.sh
@@ -23,7 +23,7 @@ dockers:
       - "--pull"
       - "--platform=linux/amd64"
       - "--build-arg=TORCH_INDEX_URL=https://download.pytorch.org/whl/cpu"
-    dockerfile: Dockerfile
+    dockerfile: .goreleaser.Dockerfile
     extra_files:
       - comfyui-entrypoint.sh
       - comfyui-install-nodes.sh
