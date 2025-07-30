@@ -32,6 +32,16 @@ func runCmd(command ...string) error {
 	return cmd.Run()
 }
 
+func runCmds(commands ...[]string) error {
+	for _, command := range commands {
+		err := runCmd(command...)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 type SetupOpts struct {
 	ComfyUIVersion     string
 	TorchIndexUrl      string
@@ -48,7 +58,7 @@ func setup(opts SetupOpts) error {
 	archive := "/tmp/archive.tar.gz"
 
 	comfyId := fmt.Sprintf("%s:%s", userName, userName)
-	commands := [][]string{
+	return runCmds([][]string{
 		// update apt cache
 		{"apt", "-y", "update"},
 		// install utilities
@@ -67,15 +77,7 @@ func setup(opts SetupOpts) error {
 		{"pip", "install", "--no-cache-dir", "-r", filepath.Join(appDir, "requirements.txt")},
 		// ensure directories are owned by non-root user
 		{"chown", "-R", comfyId, appDir, dataDir},
-	}
-	for _, command := range commands {
-		err := runCmd(command...)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
+	}...)
 }
 
 type InstallNodesOpts struct {
@@ -89,15 +91,18 @@ func installNodes(opts InstallNodesOpts) error {
 		logger.Info("installing node", "node", node, "url", url)
 		nodeDir := filepath.Join(nodesDir, node)
 		requirements := filepath.Join(nodeDir, "requirements.txt")
-		commands := [][]string{
+		if err := runCmds([][]string{
 			// clone node repo
 			{"git", "clone", url, nodeDir},
-			// install python deps if requirements file found
-			{"bash", "-c", fmt.Sprintf("[ -f %s ] && pip install -r %s", requirements, requirements)},
+		}...); err != nil {
+			return err
 		}
-		for _, command := range commands {
-			err := runCmd(command...)
-			if err != nil {
+
+		if _, err := os.Stat(requirements); err == nil {
+			if err := runCmds([][]string{
+				// install node dependencies (if requirements file exists)
+				{"pip", "install", "-r", requirements},
+			}...); err != nil {
 				return err
 			}
 		}
@@ -173,15 +178,7 @@ func entrypoint(opts EntrypointOpts) error {
 		// launch the app
 		launchCommand,
 	}...)
-
-	for _, command := range commands {
-		err := runCmd(command...)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
+	return runCmds(commands...)
 }
 
 func main() {
