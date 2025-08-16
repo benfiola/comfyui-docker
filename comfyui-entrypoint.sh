@@ -25,7 +25,6 @@ rm -rf /data/models/configs
 cp -R /comfyui/models.bak/configs /data/models/configs
 ln -s /data/models /comfyui/models
 
-mv /comfyui/user /comfyui/user.bak
 mkdir -p /data/user
 ln -s /data/user /comfyui/user
 
