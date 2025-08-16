@@ -9,6 +9,7 @@ if [ "${current_uid}" != "0" ]; then
     exit 1;
   fi
   python /comfyui/main.py "$@"
+  exit $?
 fi
 
 if [ "${comfy_uid}" != "${UID}" ]; then
@@ -19,9 +20,14 @@ if [ "${comfy_gid}" != "${GID}" ]; then
 fi
 
 mv /comfyui/models /comfyui/models.bak
-mkdir -p /data
-rm -rf /data/configs
-cp -R /comfyui/models.bak/configs /data/configs
-ln -s /data /comfyui/models
+mkdir -p /data/models
+rm -rf /data/models/configs
+cp -R /comfyui/models.bak/configs /data/models/configs
+ln -s /data/models /comfyui/models
+
+mv /comfyui/user /comfyui/user.bak
+mkdir -p /data/user
+ln -s /data/user /comfyui/user
+
 chown -R comfyui:comfyui /comfyui /data
 gosu comfyui:comfyui python /comfyui/main.py "$@"
