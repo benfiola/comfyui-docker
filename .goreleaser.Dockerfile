@@ -1,7 +1,7 @@
 FROM python:3.12.11-bookworm
 
 # setup arguments
-ARG COMFYUI_VERSION=0.3.45
+ARG COMFYUI_VERSION=0.3.50
 ARG TORCH_VERSION=2.7.1
 ARG TORCH_INDEX_URL=https://download.pytorch.org/whl/cu126
 ARG TORCHAUDIO_VERSION=2.7.1
